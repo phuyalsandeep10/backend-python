@@ -59,7 +59,7 @@ jobs:
             docker pull 550487074506.dkr.ecr.us-east-1.amazonaws.com/chatboq-service:latest
 
             echo "Navigating to project directory..."
-            cd /home/ubuntu/chatboq-service
+            cd /home/ubuntu/backend-python
 
             echo "Pulling latest code from Git..."
             git pull origin main
