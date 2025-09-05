@@ -56,7 +56,7 @@ jobs:
               aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 550487074506.dkr.ecr.us-east-1.amazonaws.com
             
              # Pull latest images
-             docker pull 550487074506.dkr.ecr.us-east-1.amazonaws.com/django-repo:latest
+             docker pull 550487074506.dkr.ecr.us-east-1.amazonaws.com/chatboq-service:latest
 
              # Go to the project directory where docker-compose.yml exists
              cd /home/ubuntu/chatboq-service
