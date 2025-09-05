@@ -1,0 +1,79 @@
+name: Build, publish, and deploy backend Docker image to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          docker build -t chatboq-service .
+
+      - name: Tag Docker image
+        run: |
+          docker tag chatboq-service:latest 550487074506.dkr.ecr.us-east-1.amazonaws.com/chatboq-service:latest
+
+      - name: Push Docker image to Amazon ECR
+        run: |
+          docker push 550487074506.dkr.ecr.us-east-1.amazonaws.com/chatboq-service:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT }}
+          script: |
+            echo "=== Debug Info ==="
+            whoami
+            pwd
+            docker --version
+            docker-compose --version
+            ls -la /home/ubuntu/chatboq-service
+
+            echo "=== Logging in to AWS ECR ==="
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 550487074506.dkr.ecr.us-east-1.amazonaws.com
+
+            echo "=== Pulling latest Docker image ==="
+            docker pull 550487074506.dkr.ecr.us-east-1.amazonaws.com/chatboq-service:latest
+
+            echo "=== Navigating to project directory ==="
+            cd /home/ubuntu/chatboq-service || exit 1
+
+            echo "=== Pulling latest code ==="
+            git pull origin main
+
+            echo "=== Restarting Docker Compose services ==="
+            docker-compose --env-file .env down
+            docker-compose --env-file .env up -d
+
+            echo "=== Running Django migrations ==="
+            docker-compose --env-file .env exec -T backend python manage.py migrate

@@ -10,7 +10,7 @@ __pycache__/
 *$py.class
 
 /*venv
-*.github/
+#*.github/
 *.idea/
 *.vscode/
 *.venv/
