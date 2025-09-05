@@ -64,7 +64,6 @@ jobs:
              # Pull the latest code from Git
              git pull origin main
 
-            
              # Restart services using the .env file explicitly
               docker-compose --env-file .env down
               docker-compose --env-file .env up -d
