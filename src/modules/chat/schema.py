@@ -1,0 +1,40 @@
+from pydantic import BaseModel
+from typing import Optional
+from src.modules.visitor.schema import  CustomerSchema
+
+# from typing import datetime
+
+class ConversationSchema(BaseModel):
+    id: int
+    customer_id: int
+    name: str
+    created_at: str
+    updated_at: str
+    attributes: dict
+    is_resolved: bool
+    customer: CustomerSchema
+
+
+class MessageAttachment(BaseModel):
+    file_name: str
+    file_size: int
+    file_type: str
+    file_url: str
+
+
+class MessageSchema(BaseModel):
+    content: str
+    customer_id: Optional[int] = None
+    reply_to_id: Optional[int] = None
+    attachments: Optional[list[MessageAttachment]] = []
+
+
+class EditMessageSchema(BaseModel):
+    content: str
+    reply_to_id: Optional[int] = None
+
+class CustomerUpdateSchema(BaseModel):
+    email: str
+    name: Optional[str] = None
+    phone: Optional[str] = None
+

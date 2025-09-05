@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SLA Breach Notification</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Outfit", Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Email wrapper table -->
+    <table
+      align="center"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      width="100%"
+      style="
+        border-collapse: collapse;
+        font-family: Outfit, Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        color: #2d004c;
+        background-color: #f5f5f5;
+      "
+    >
+      <tr>
+        <td align="center" style="padding: 20px 0">
+          <!-- Header outside the bordered content -->
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="96%"
+            style="border-collapse: collapse; margin-bottom: 20px"
+          >
+            <tr>
+              <td
+                align="center"
+                style="
+                  padding: 20px;
+                  background-color: #e74c3c;
+                  color: #ffffff;
+                  font-size: 18px;
+                  font-weight: 600;
+                  line-height: 29px;
+                  font-family: Outfit, Arial, sans-serif;
+                "
+              >
+                SLA Breach Notification
+              </td>
+            </tr>
+          </table>
+          <!-- Main content with border and 8px border-radius -->
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="90%"
+            style="
+              border-collapse: collapse;
+              background-color: #ffffff;
+              border: 1px solid #d4d4d4;
+              border-radius: 8px;
+              font-family: Outfit, Arial, sans-serif;
+            "
+          >
+            <!-- Greeting -->
+            <tr>
+              <td style="padding: 20px">
+                <p
+                  style="
+                    margin: 0 0 12px 0;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  Hello
+                  <span
+                    style="
+                      color: #9500ff;
+                      font-size: 18px;
+                      font-weight: 600;
+                      line-height: 29px;
+                    "
+                    >{{ticket["customer"]["name"] if ticket["customer"] else
+                    ticket["customer_name"]}}</span
+                  >,
+                </p>
+                <p
+                  style="
+                    margin: 0 0 12px 0;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  We regret to inform you that your support ticket #12345 has
+                  exceeded the agreed Service Level Agreement (SLA) resolution
+                  time.
+                </p>
+              </td>
+            </tr>
+            <!-- Ticket details -->
+            <tr>
+              <td
+                style="
+                  padding: 10px 20px;
+                  font-family: Outfit, Arial, sans-serif;
+                "
+              >
+                <table
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  width="100%"
+                  style="font-family: Outfit, Arial, sans-serif"
+                >
+                  <tr>
+                    <td width="20" valign="top" style="padding: 8px 8px 8px 0">
+                      •
+                    </td>
+                    <td
+                      width="30%"
+                      style="
+                        padding: 8px;
+                        font-weight: 600;
+                        font-family: Outfit, Arial, sans-serif;
+                      "
+                    >
+                      Ticket ID:
+                    </td>
+                    <td
+                      width="70%"
+                      style="
+                        padding: 8px;
+                        font-family: Outfit, Arial, sans-serif;
+                      "
+                    >
+                      {{ticket["id"]}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="20" valign="top" style="padding: 8px 8px 8px 0">
+                      •
+                    </td>
+                    <td
+                      style="
+                        padding: 8px;
+                        font-weight: 600;
+                        font-family: Outfit, Arial, sans-serif;
+                      "
+                    >
+                      Issue Reported:
+                    </td>
+                    <td
+                      style="
+                        padding: 8px;
+                        font-family: Outfit, Arial, sans-serif;
+                      "
+                    >
+                      {{ticket["title"]}}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Reason for breach -->
+            <tr>
+              <td
+                style="
+                  padding: 15px 20px 5px 20px;
+                  font-family: Outfit, Arial, sans-serif;
+                "
+              >
+                <p
+                  style="
+                    margin: 0 0 8px 0;
+                    font-weight: 600;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  Reason for SLA Breach:
+                </p>
+                <p
+                  style="
+                    margin: 0 0 12px 0;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  {{message}}
+                </p>
+              </td>
+            </tr>
+            <!-- Apology -->
+            <tr>
+              <td
+                style="
+                  padding: 10px 20px;
+                  font-family: Outfit, Arial, sans-serif;
+                "
+              >
+                <p
+                  style="
+                    margin: 0 0 12px 0;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  We understand the importance of timely support and sincerely
+                  apologize for this delay. Our team is actively working on your
+                  case, and we'll provide updates until resolution is reached.
+                </p>
+              </td>
+            </tr>
+            <!-- Next steps -->
+            <tr>
+              <td
+                style="
+                  padding: 10px 20px 12px 20px;
+                  font-family: Outfit, Arial, sans-serif;
+                "
+              >
+                <p
+                  style="
+                    margin: 0 0 8px 0;
+                    font-weight: 600;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  ￼ Next Steps:
+                </p>
+                <table
+                  cellpadding="0"
+                  cellspacing="0"
+                  width="100%"
+                  style="
+                    font-family: Outfit, Arial, sans-serif;
+                    margin-bottom: 15px;
+                  "
+                >
+                  <tr>
+                    <td width="20" valign="top" style="padding: 0 8px 8px 0">
+                      •
+                    </td>
+                    <td
+                      style="
+                        padding: 0 0 8px 0;
+                        font-family: Outfit, Arial, sans-serif;
+                      "
+                    >
+                      A dedicated support agent is now assigned to expedite your
+                      ticket.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="20" valign="top" style="padding: 0 8px 8px 0">
+                      •
+                    </td>
+                    <td
+                      style="
+                        padding: 0 0 8px 0;
+                        font-family: Outfit, Arial, sans-serif;
+                      "
+                    >
+                      You will receive updates as progress is made.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="20" valign="top" style="padding: 0 8px 0 0">
+                      •
+                    </td>
+                    <td
+                      style="padding: 0; font-family: Outfit, Arial, sans-serif"
+                    >
+                      If you require immediate assistance, you can reach us at
+                      <a
+                        href="mailto:support@chatboq.com"
+                        style="
+                          color: #9500ff;
+                          text-decoration: underline;
+                          font-family: Outfit, Arial, sans-serif;
+                        "
+                      >
+                        support@chatboq.com
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Closing -->
+            <tr>
+              <td
+                style="
+                  padding: 0px 20px 20px 20px;
+                  font-family: Outfit, Arial, sans-serif;
+                "
+              >
+                <p
+                  style="
+                    margin: 0 0 30px 0;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  Thank you for your patience and understanding. We value your
+                  trust in Chatboq and are committed to resolving this issue as
+                  quickly as possible.
+                </p>
+                <p style="margin: 0; font-family: Outfit, Arial, sans-serif">
+                  Sincerely,
+                </p>
+                <p
+                  style="
+                    margin: 0;
+                    font-weight: 600;
+                    font-family: Outfit, Arial, sans-serif;
+                  "
+                >
+                  The Chatboq Support Team
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

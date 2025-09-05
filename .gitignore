@@ -1,0 +1,22 @@
+*.env
+*.sqlite
+__pycache__
+# Ignore Python cache files
+
+build/
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+/*venv
+*.github/
+*.idea/
+*.vscode/
+*.venv/
+src/chatboq_service.egg-info/
+
+# Ignore Celery Beat SQLite side files
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal

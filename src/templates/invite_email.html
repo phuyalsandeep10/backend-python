@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invitation</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background-color: #f8fafc;
+        padding: 40px 20px;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .title {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #8b5cf6;
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .card {
+        background: white;
+        border-radius: 12px;
+        padding: 32px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+      }
+      .greeting {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        color: #030303;
+      }
+      .greeting .name {
+        color: #8b5cf6;
+        font-weight: 600;
+      }
+      .name {
+        text-transform: capitalize;
+      }
+      .message {
+        color: #030303;
+        margin-bottom: 24px;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin: 24px 0;
+      }
+      .btn {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .btn-accept {
+        background: #16a34a;
+        color: white;
+      }
+      .btn-accept:hover {
+        background: #15803d;
+      }
+      .btn-reject {
+        background: #dc2626;
+        color: white;
+      }
+      .btn-reject:hover {
+        background: #b91c1c;
+      }
+      .support-text {
+        color: #030303;
+        margin-bottom: 20px;
+        font-size: 1rem;
+      }
+      .team-signature {
+        color: #030303;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      @media (max-width: 640px) {
+        .title {
+          font-size: 2rem;
+        }
+        .card {
+          padding: 24px;
+        }
+        body {
+          padding: 20px 16px;
+        }
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">You're Invited!</h1>
+      <div class="card">
+        <p class="greeting">Hello <span class="name">{{ name }}</span>,</p>
+        <p class="message">
+          You’ve been invited to join our organization in Chatboq. Please
+          confirm your choice below:
+        </p>
+
+        <div class="action-buttons">
+          <a href="{{ accept_link }}" class="btn btn-accept"
+            >Accept Invitation</a
+          >
+          <a href="{{ reject_link }}" class="btn btn-reject"
+            >Reject Invitation</a
+          >
+        </div>
+
+        <p class="support-text">
+          If you have any questions, feel free to reply to this email or contact
+          our support team.
+        </p>
+        <p class="team-signature">– The Chatboq Team</p>
+      </div>
+    </div>
+  </body>
+</html>

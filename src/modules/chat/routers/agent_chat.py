@@ -1,0 +1,166 @@
+from fastapi import APIRouter
+from src.utils.response import CustomResponse as cr
+from src.models import Conversation,  Message
+from src.models import Customer
+from src.common.context import UserContext, TenantContext
+from ..schema import MessageSchema, EditMessageSchema
+
+from ..services.message_service import MessageService
+
+from ..models.conversation import get_conversation_list
+from src.models import ConversationMember
+
+from src.websocket.services.conversation_service import ConversationService
+from sqlalchemy.orm import selectinload
+from src.models import ConversationMember
+
+
+
+router = APIRouter()
+
+@router.get("/conversations")
+async def get_conversations():
+   
+    organizationId = TenantContext.get()
+
+    records = await get_conversation_list(organizationId)
+
+    return cr.success(data=records)
+
+@router.put("/conversations/{conversation_id}/joined")
+async def joined_conversation(conversation_id: int):
+    organizationId = TenantContext.get()
+    userId = UserContext.get()
+
+    record = await ConversationMember.find_one(
+        {"conversation_id": conversation_id, "user_id": userId}
+    )
+
+    if record:
+        # await ConversationService().agent_join_conversation(user_id=userId,conversation_id=conversation_id)
+        return cr.success()
+        
+    record = await ConversationMember.create(
+        conversation_id=conversation_id, user_id=userId
+    )
+
+    # await ConversationService().agent_join_conversation(user_id=userId,conversation_id=conversation_id)
+
+    if not record:
+        return cr.error(message="Failed to join conversation")
+
+    return cr.success(data=record.to_json())
+
+
+
+@router.get("/conversations/{conversation_id}")
+async def conversation_detail(conversation_id: int):
+
+    organizationId = TenantContext.get()
+
+    record = await Conversation.find_one(
+        {"id": conversation_id, "organization_id": organizationId},
+
+    )
+
+    if not record:
+        return cr.error(message="Conversation Not found")
+
+    customer = await Customer.get(record.customer_id)
+    members = await ConversationMember.filter({"conversation_id": conversation_id},related_items=[selectinload(ConversationMember.user)])
+
+    new_members = []
+    for member in members:
+        data = member.to_json()
+        if member.user:
+            data["user"] = member.user.to_json()
+            del data["user"]['password']
+        new_members.append(data)
+
+
+    return cr.success(
+        data={"conversation": record.to_json(), "customer": customer.to_json(), "members": new_members}
+    )
+
+
+@router.get("/conversations/{conversation_id}/messages")
+async def get_conversation_messages(conversation_id: int):
+    organizationId = TenantContext.get()
+
+    record = await Conversation.find_one(
+        {"id": conversation_id, "organization_id": organizationId}
+    )
+
+    if not record:
+        return cr.error(message="Conversation Not found")
+    
+    print(f"get conversation messages {conversation_id} and organizationId {organizationId}")
+
+    records = await MessageService(organizationId).get_messages(conversation_id)
+
+    return cr.success(data=records)
+
+
+@router.post("/conversations/{conversation_id}/messages")
+async def create_conversation_message(conversation_id: int, payload: MessageSchema):
+    organizationId = TenantContext.get()
+    userId = UserContext.get()
+
+    del payload.customer_id
+
+    service = MessageService(organizationId, payload, userId)
+    record = await service.create(conversation_id)
+
+    return cr.success(data=record)
+
+
+# edit the message
+@router.put("/messages/{message_id}")
+async def edit_message(message_id: int, payload: EditMessageSchema):
+    organizationId = TenantContext.get()
+    print(f"organizationId {organizationId}")
+
+    userId = UserContext.get()
+
+    service = MessageService(organizationId, payload, userId)
+    record = await service.edit(message_id)
+
+    return cr.success(data=record.to_json())
+
+
+# resolved conversations
+@router.put("/conversations/{conversation_id}/resolved")
+async def resolved_conversation(conversation_id: int):
+    organizationId = TenantContext.get()
+
+    # Find the conversation
+    record = await Conversation.find_one(
+        {"id": conversation_id, "organization_id": organizationId}
+    )
+
+    if not record:
+        return cr.error(message="Failed to resolve conversation")
+
+    # update the conversation
+    record = await Conversation.update(conversation_id, is_resolved=True)
+    
+
+    return cr.success(data=record.to_json())
+
+
+@router.post('/{customer_id}/initialize-conversation')
+async def initialize_conversation(customer_id: int,payload:MessageSchema):
+    organizationId = TenantContext.get()
+    payload.customer_id = customer_id
+    record = await Conversation.create(
+        customer_id=customer_id,
+        organization_id=organizationId,
+    )
+  
+
+    await ConversationService().customer_join_conversation(customer_id=customer_id, conversation_id=record.id)
+    service = MessageService(organization_id=organizationId, payload=payload)
+    await service.create(record.id)
+    
+    
+    return cr.success(data=record.to_json())
