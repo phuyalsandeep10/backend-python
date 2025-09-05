@@ -52,21 +52,23 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-             # Log in to AWS ECR on the EC2 instance
-              aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 550487074506.dkr.ecr.us-east-1.amazonaws.com
-            
-             # Pull latest images
-             docker pull 550487074506.dkr.ecr.us-east-1.amazonaws.com/chatboq-service:latest
+            echo "Logging in to AWS ECR..."
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 550487074506.dkr.ecr.us-east-1.amazonaws.com
 
-             # Go to the project directory where docker-compose.yml exists
-             cd /home/ubuntu/chatboq-service
+            echo "Pulling latest Docker image..."
+            docker pull 550487074506.dkr.ecr.us-east-1.amazonaws.com/chatboq-service:latest
 
-             # Pull the latest code from Git
-             git pull origin main
+            echo "Navigating to project directory..."
+            cd /home/ubuntu/chatboq-service
 
-             # Restart services using the .env file explicitly
-              docker-compose --env-file .env down
-              docker-compose --env-file .env up -d
+            echo "Pulling latest code from Git..."
+            git pull origin main
 
-              # Run Django migrations
-               docker-compose --env-file .env exec -T backend python manage.py migrate
+            echo "Stopping existing Docker Compose services..."
+            docker-compose --env-file .env down
+
+            echo "Starting Docker Compose services..."
+            docker-compose --env-file .env up -d
+
+            echo "Running Django migrations..."
+            docker-compose --env-file .env exec -T backend python manage.py migrate
